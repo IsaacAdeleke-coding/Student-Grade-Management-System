@@ -6,9 +6,25 @@
 //
 
 #include <iostream>
+#include <string>
 
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cout << "Hello, World!\n";
+using namespace std;
+
+// Constants
+const int MAX_STUDENTS = 100; // Maximum number of students
+const int MAX_SUBJECTS = 5; // Number of subjects
+
+// Student Structure
+struct Student {
+    string name;
+    int id;
+    float grades[MAX_SUBJECTS];
+};
+
+int main() {
+    Student students[MAX_STUDENTS];
+    int count = 0; // Current number of students
+    int choice;
+    
     return 0;
 }
