@@ -24,6 +24,7 @@ struct Student {
 // Function Prototypes
 void displayMenu();
 void addStudent(Student students[], int &count);
+void viewStudents(const Student students[], int count);
 
 int main() {
     Student students[MAX_STUDENTS];
@@ -37,6 +38,9 @@ int main() {
         switch (choice) {
             case 1:
                 addStudent(students, count);
+                break;
+            case 2:
+                viewStudents(students, count);
                 break;
             // Other cases will be added in future commits
             case 6:
@@ -84,4 +88,24 @@ void addStudent(Student students[], int &count) {
     }
     count++;
     cout << "Student added successfully.\n";
+}
+
+// View all student records
+void viewStudents(const Student students[], int count) {
+    if (count == 0) {
+        cout << "No student records available.\n";
+        return;
+    }
+
+    cout << "Student Records:\n";
+    cout << "---------------------------\n";
+    for (int i = 0; i < count; ++i) {
+        cout << "Name: " << students[i].name << "\n";
+        cout << "ID: " << students[i].id << "\n";
+        cout << "Grades: ";
+        for (int j = 0; j < MAX_SUBJECTS; ++j) {
+            cout << students[i].grades[j] << " ";
+        }
+        cout << "\n---------------------------\n";
+    }
 }
