@@ -151,3 +151,48 @@ void viewStudents(const Student students[], int count) {
        cout << "\n---------------------------\n";
    }
 }
+
+// Modify an existing student record
+void modifyStudent(Student students[], int count) {
+   if (count == 0) {
+       cout << "No student records available to modify.\n";
+       return;
+   }
+
+   int id;
+   cout << "Enter Student ID to modify: ";
+   cin >> id;
+
+   // Validate student ID input
+   while (cin.fail()) {
+       cin.clear(); // Clear the error flag
+       cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignore incorrect input
+       cout << "Invalid input. Please enter a valid numeric Student ID: ";
+       cin >> id;
+   }
+
+   for (int i = 0; i < count; ++i) {
+       if (students[i].id == id) {
+           cout << "Enter new name: ";
+           cin.ignore(); // Clear the input buffer
+           getline(cin, students[i].name);
+
+           for (int j = 0; j < MAX_SUBJECTS; ++j) {
+               cout << "Enter new grade for subject " << j + 1 << " (0-100): ";
+               cin >> students[i].grades[j];
+
+               // Validate grade input
+               while (cin.fail() || students[i].grades[j] < 0 || students[i].grades[j] > 100) {
+                   cin.clear(); // Clear the error flag
+                   cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignore incorrect input
+                   cout << "Invalid input. Please enter a valid grade (0-100): ";
+                   cin >> students[i].grades[j];
+               }
+           }
+           cout << "Student record updated successfully.\n";
+           return;
+       }
+   }
+   cout << "Student ID not found.\n";
+}
+
