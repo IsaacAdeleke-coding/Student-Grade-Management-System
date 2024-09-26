@@ -108,4 +108,11 @@ void addStudent(Student students[], int &count) {
     cout << "Enter Student ID: ";
     cin >> students[count].id;
     
+    // Validate student ID input
+    while (cin.fail()) {
+        cin.clear(); // Clear the error flag
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignore incorrect input
+        cout << "Invalid input. Please enter a valid numeric Student ID: ";
+        cin >> students[count].id;
+    }
 }
