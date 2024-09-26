@@ -115,4 +115,16 @@ void addStudent(Student students[], int &count) {
         cout << "Invalid input. Please enter a valid numeric Student ID: ";
         cin >> students[count].id;
     }
+    for (int i = 0; i < MAX_SUBJECTS; ++i) {
+        cout << "Enter grade for subject " << i + 1 << " (0-100): ";
+        cin >> students[count].grades[i];
+        
+        // Validate grade input
+        while (cin.fail() || students[count].grades[i] < 0 || students[count].grades[i] > 100) {
+            cin.clear(); // Clear the error flag
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignore incorrect input
+            cout << "Invalid input. Please enter a valid grade (0-100): ";
+            cin >> students[count].grades[i];
+        }
+    }
 }
