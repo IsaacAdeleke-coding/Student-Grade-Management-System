@@ -196,3 +196,34 @@ void modifyStudent(Student students[], int count) {
    cout << "Student ID not found.\n";
 }
 
+// Delete a student record
+void deleteStudent(Student students[], int &count) {
+   if (count == 0) {
+       cout << "No student records available to delete.\n";
+       return;
+   }
+
+   int id;
+   cout << "Enter Student ID to delete: ";
+   cin >> id;
+
+   // Validate student ID input
+   while (cin.fail()) {
+       cin.clear(); // Clear the error flag
+       cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignore incorrect input
+       cout << "Invalid input. Please enter a valid numeric Student ID: ";
+       cin >> id;
+   }
+
+   for (int i = 0; i < count; ++i) {
+       if (students[i].id == id) {
+           for (int j = i; j < count - 1; ++j) {
+               students[j] = students[j + 1];
+           }
+           count--;
+           cout << "Student record deleted successfully.\n";
+           return;
+       }
+   }
+   cout << "Student ID not found.\n";
+}
