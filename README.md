@@ -1,4 +1,5 @@
 # Student Grade Management System
+[Uploading Screen-2024-09-29-122747(1)(1)(1).mp4.zip…]()
 
 ## Overview
 The Student Grade Management System is a C++ console application designed to manage student records efficiently. This system allows users to add, view, modify, and delete student records. It also provides a statistical analysis of student grades across multiple subjects. This project is aimed at helping educators and administrators streamline the management of student data.
