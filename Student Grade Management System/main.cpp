@@ -4,14 +4,6 @@
 //
 //  Created by Isaac Adeleke on 9/23/24.
 //
-
-//
-//  main.cpp
-//  Student Grade Management System
-//
-//  Created by Isaac Adeleke on 9/23/24.
-//
-
 #include <iostream>
 #include <string>
 #include <limits> // For numeric_limits
@@ -21,6 +13,9 @@ using namespace std;
 // Constants
 const int MAX_STUDENTS = 100; // Maximum number of students
 const int MAX_SUBJECTS = 5;   // Number of subjects
+
+// Subject names (you can modify these as needed)
+const string SUBJECT_NAMES[MAX_SUBJECTS] = {"Math", "English", "Physics", "Chemistry", "Biology"};
 
 // Student Structure
 struct Student {
@@ -33,6 +28,7 @@ struct Student {
 void displayMenu();
 void addStudent(Student students[], int &count);
 void viewStudents(const Student students[], int count);
+void viewSingleStudent(const Student students[], int count);
 void modifyStudent(Student students[], int count);
 void deleteStudent(Student students[], int &count);
 void calculateStatistics(const Student students[], int count);
@@ -70,12 +66,15 @@ int main() {
                 calculateStatistics(students, count);
                 break;
             case 6:
+                viewSingleStudent(students, count); // New option to search for a student
+                break;
+            case 7:
                 cout << "Exiting program...\n";
                 break;
             default:
                 cout << "Invalid choice. Please try again.\n";
         }
-    } while (choice != 6);
+    } while (choice != 7);
 
     return 0;
 }
@@ -90,7 +89,8 @@ void displayMenu() {
     cout << "3. Modify Student Record\n";
     cout << "4. Delete Student Record\n";
     cout << "5. Calculate Statistics\n";
-    cout << "6. Exit\n";
+    cout << "6. Search and View Student Record\n"; // New option
+    cout << "7. Exit\n";
     cout << "Enter your choice: ";
 }
 
@@ -100,130 +100,169 @@ void addStudent(Student students[], int &count) {
         cout << "Maximum number of students reached. Cannot add more students.\n";
         return;
     }
-    
+
     cout << "Enter Student Name: ";
     cin.ignore(); // Clear the input buffer before getting the name
     getline(cin, students[count].name);
-    
+
     cout << "Enter Student ID: ";
-    cin >> students[count].id;
-    
-    // Validate student ID input
-   while (cin.fail()) {
-       cin.clear(); // Clear the error flag
-       cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignore incorrect input
-       cout << "Invalid input. Please enter a valid numeric Student ID: ";
-       cin >> students[count].id;
-   }
+    while (!(cin >> students[count].id)) { // Validate student ID input
+        cin.clear(); // Clear the error flag
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignore incorrect input
+        cout << "Invalid input. Please enter a valid numeric Student ID: ";
+    }
 
-   for (int i = 0; i < MAX_SUBJECTS; ++i) {
-       cout << "Enter grade for subject " << i + 1 << " (0-100): ";
-       cin >> students[count].grades[i];
-
-       // Validate grade input
-       while (cin.fail() || students[count].grades[i] < 0 || students[count].grades[i] > 100) {
-           cin.clear(); // Clear the error flag
-           cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignore incorrect input
-           cout << "Invalid input. Please enter a valid grade (0-100): ";
-           cin >> students[count].grades[i];
-       }
-   }
-   count++;
-   cout << "Student added successfully.\n";
+    for (int i = 0; i < MAX_SUBJECTS; ++i) {
+        cout << "Enter grade for " << SUBJECT_NAMES[i] << " (0-100): ";
+        while (!(cin >> students[count].grades[i]) || students[count].grades[i] < 0 || students[count].grades[i] > 100) {
+            cin.clear(); // Clear the error flag
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignore incorrect input
+            cout << "Invalid input. Please enter a valid grade for " << SUBJECT_NAMES[i] << " (0-100): ";
+        }
+    }
+    count++;
+    cout << "Student added successfully.\n";
 }
 
 // View all student records
 void viewStudents(const Student students[], int count) {
-   if (count == 0) {
-       cout << "No student records available.\n";
-       return;
-   }
+    if (count == 0) {
+        cout << "No student records available.\n";
+        return;
+    }
 
-   cout << "Student Records:\n";
-   cout << "---------------------------\n";
-   for (int i = 0; i < count; ++i) {
-       cout << "Name: " << students[i].name << "\n";
-       cout << "ID: " << students[i].id << "\n";
-       cout << "Grades: ";
-       for (int j = 0; j < MAX_SUBJECTS; ++j) {
-           cout << students[i].grades[j] << " ";
-       }
-       cout << "\n---------------------------\n";
-   }
+    cout << "Student Records:\n";
+    cout << "---------------------------\n";
+    for (int i = 0; i < count; ++i) {
+        cout << "Name: " << students[i].name << "\n";
+        cout << "ID: " << students[i].id << "\n";
+        cout << "Grades:\n";
+        for (int j = 0; j < MAX_SUBJECTS; ++j) {
+            cout << SUBJECT_NAMES[j] << ": " << students[i].grades[j] << "\n";
+        }
+        cout << "---------------------------\n";
+    }
+}
+
+// View a single student record based on Student ID
+void viewSingleStudent(const Student students[], int count) {
+    if (count == 0) {
+        cout << "No student records available to search.\n";
+        return;
+    }
+
+    int id;
+    cout << "Enter Student ID to search: ";
+    while (!(cin >> id)) { // Validate student ID input
+        cin.clear(); // Clear the error flag
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignore incorrect input
+        cout << "Invalid input. Please enter a valid numeric Student ID: ";
+    }
+
+    for (int i = 0; i < count; ++i) {
+        if (students[i].id == id) {
+            cout << "Student found:\n";
+            cout << "Name: " << students[i].name << "\n";
+            cout << "ID: " << students[i].id << "\n";
+            cout << "Grades:\n";
+            for (int j = 0; j < MAX_SUBJECTS; ++j) {
+                cout << SUBJECT_NAMES[j] << ": " << students[i].grades[j] << "\n";
+            }
+            cout << "---------------------------\n";
+            return;
+        }
+    }
+    cout << "Student ID not found.\n";
 }
 
 // Modify an existing student record
 void modifyStudent(Student students[], int count) {
-   if (count == 0) {
-       cout << "No student records available to modify.\n";
-       return;
-   }
+    if (count == 0) {
+        cout << "No student records available to modify.\n";
+        return;
+    }
 
-   int id;
-   cout << "Enter Student ID to modify: ";
-   cin >> id;
+    int id;
+    cout << "Enter Student ID to modify: ";
+    while (!(cin >> id)) { // Validate student ID input
+        cin.clear(); // Clear the error flag
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignore incorrect input
+        cout << "Invalid input. Please enter a valid numeric Student ID: ";
+    }
 
-   // Validate student ID input
-   while (cin.fail()) {
-       cin.clear(); // Clear the error flag
-       cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignore incorrect input
-       cout << "Invalid input. Please enter a valid numeric Student ID: ";
-       cin >> id;
-   }
+    for (int i = 0; i < count; ++i) {
+        if (students[i].id == id) {
+            cout << "Enter new name: ";
+            cin.ignore(); // Clear the input buffer
+            getline(cin, students[i].name);
 
-   for (int i = 0; i < count; ++i) {
-       if (students[i].id == id) {
-           cout << "Enter new name: ";
-           cin.ignore(); // Clear the input buffer
-           getline(cin, students[i].name);
-
-           for (int j = 0; j < MAX_SUBJECTS; ++j) {
-               cout << "Enter new grade for subject " << j + 1 << " (0-100): ";
-               cin >> students[i].grades[j];
-
-               // Validate grade input
-               while (cin.fail() || students[i].grades[j] < 0 || students[i].grades[j] > 100) {
-                   cin.clear(); // Clear the error flag
-                   cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignore incorrect input
-                   cout << "Invalid input. Please enter a valid grade (0-100): ";
-                   cin >> students[i].grades[j];
-               }
-           }
-           cout << "Student record updated successfully.\n";
-           return;
-       }
-   }
-   cout << "Student ID not found.\n";
+            for (int j = 0; j < MAX_SUBJECTS; ++j) {
+                cout << "Enter new grade for " << SUBJECT_NAMES[j] << " (0-100): ";
+                while (!(cin >> students[i].grades[j]) || students[i].grades[j] < 0 || students[i].grades[j] > 100) {
+                    cin.clear(); // Clear the error flag
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignore incorrect input
+                    cout << "Invalid input. Please enter a valid grade (0-100): ";
+                }
+            }
+            cout << "Student record updated successfully.\n";
+            return;
+        }
+    }
+    cout << "Student ID not found.\n";
 }
 
 // Delete a student record
 void deleteStudent(Student students[], int &count) {
-   if (count == 0) {
-       cout << "No student records available to delete.\n";
-       return;
-   }
+    if (count == 0) {
+        cout << "No student records available to delete.\n";
+        return;
+    }
 
-   int id;
-   cout << "Enter Student ID to delete: ";
-   cin >> id;
+    int id;
+    cout << "Enter Student ID to delete: ";
+    while (!(cin >> id)) { // Validate student ID input
+        cin.clear(); // Clear the error flag
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignore incorrect input
+        cout << "Invalid input. Please enter a valid numeric Student ID: ";
+    }
 
-   // Validate student ID input
-   while (cin.fail()) {
-       cin.clear(); // Clear the error flag
-       cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignore incorrect input
-       cout << "Invalid input. Please enter a valid numeric Student ID: ";
-       cin >> id;
-   }
+    for (int i = 0; i < count; ++i) {
+        if (students[i].id == id) {
+            for (int j = i; j < count - 1; ++j) {
+                students[j] = students[j + 1];
+            }
+            count--;
+            cout << "Student record deleted successfully.\n";
+            return;
+        }
+    }
+    cout << "Student ID not found.\n";
+}
 
-   for (int i = 0; i < count; ++i) {
-       if (students[i].id == id) {
-           for (int j = i; j < count - 1; ++j) {
-               students[j] = students[j + 1];
-           }
-           count--;
-           cout << "Student record deleted successfully.\n";
-           return;
-       }
-   }
-   cout << "Student ID not found.\n";
+// Calculate and display statistics
+void calculateStatistics(const Student students[], int count) {
+    if (count == 0) {
+        cout << "No student records available to calculate statistics.\n";
+        return;
+    }
+
+    float totalGrades[MAX_SUBJECTS] = {0};
+    float maxGrades[MAX_SUBJECTS] = {0};
+    float minGrades[MAX_SUBJECTS] = {100};
+
+    for (int i = 0; i < count; ++i) {
+        for (int j = 0; j < MAX_SUBJECTS; ++j) {
+            totalGrades[j] += students[i].grades[j];
+            if (students[i].grades[j] > maxGrades[j]) maxGrades[j] = students[i].grades[j];
+            if (students[i].grades[j] < minGrades[j]) minGrades[j] = students[i].grades[j];
+        }
+    }
+
+    cout << "Statistics:\n";
+    for (int i = 0; i < MAX_SUBJECTS; ++i) {
+        cout << SUBJECT_NAMES[i] << ":\n";
+        cout << "Average: " << totalGrades[i] / count << "\n";
+        cout << "Highest: " << maxGrades[i] << "\n";
+        cout << "Lowest: " << minGrades[i] << "\n";
+    }
 }
